@@ -1,5 +1,8 @@
 package com.test.socket.server;
 
+import javax.websocket.OnClose;
+import javax.websocket.OnError;
+import javax.websocket.OnMessage;
 import javax.websocket.OnOpen;
 import javax.websocket.server.ServerEndpoint;
 
@@ -19,5 +22,28 @@ public class SocketServer {
 		
 		
 	}
+	
+	//클라이언트와의 연결이 종료될 때 발생
+	@OnClose
+	public void handleClose() {
+		
+		System.out.println("클라이언트와 접속이 끊겼습니다.");
+	}
+	
+	//클라이언트가 메세지를 전송 > 서버가 수신할때 발생
+	@OnMessage
+	public String handleMessage(String msg) {
+		System.out.println("클라이언트가 보낸 메세지:" + msg);
+		
+		return msg; //클라이언트에게 전송 > echo
+	}
+	
+	//에러발생
+	@OnError
+	public void handleError(Throwable e) {
+		System.out.println("에러발생:" + e.getMessage());
+	}
+	
+	
 
 }
