@@ -223,6 +223,8 @@
 				} else if (message.code == '3') {
 					//"code":"3","sender":"강아지","receiver":"","content":"멍멍","regdate":"2025-10-28 14:07:06"}
 					print(message.sender, message.content, 'other', 'msg', message.regdate);
+				} else if (message.code == '4') {
+					print(message.sender, message.content, 'other', 'secret', message.regdate);
 				}
 			
 				scrollList();
@@ -256,8 +258,8 @@
 			
 			//opener.document.title = '창닫음';
 			
-			$(opener.document).find('.in').prop('disabled',false);
-			$(opener.document).find('#name').val('').prop('readOnly',false);
+			$(opener.document).find('.in').prop('disabled', false);
+			$(opener.document).find('#name').val('').prop('readOnly', false).focus();
 			
 			disconnect();
 			
@@ -299,22 +301,52 @@
 			
 			if (evt.keyCode == 13) {
 				
-				//일반 텍스트 메시지
-				const message = {
-					code: '3',
-					sender: username,
-					receiver: '',
-					content: $(event.target).val(),
-					regdate: dayjs().format('YYYY-MM-DD HH:mm:ss')			
-				};
+				//- 안녕하세요.
+				//- /고양이 안녕하세요.
 				
-				ws.send(JSON.stringify(message));
+				const regex = /^\/\S{1,}/;
 				
-				print(message.sender, message.content, 'me', 'msg', message.regdate);
+				//console.log(regex.test($(event.target).val()));
 				
-				$(event.target).val('').focus();
+				if (regex.test($(event.target).val())) {
+					
+					//귓속말
+					const message = {
+						code: '4',
+						sender: username,
+						receiver: $(event.target).val().split(' ')[0].substr(1),
+						content: $(event.target).val().substr($(event.target).val().indexOf(' ') + 1),
+						regdate: dayjs().format('YYYY-MM-DD HH:mm:ss')			
+					};
+						
+					ws.send(JSON.stringify(message));
+					
+					print(message.sender, message.content, 'me', 'secret', message.regdate);
+					
+					$(event.target).val('').focus();
+					scrollList();
+					
+				} else {
+					
+					//전체 메시지
+					//일반 텍스트 메시지
+					const message = {
+						code: '3',
+						sender: username,
+						receiver: '',
+						content: $(event.target).val(),
+						regdate: dayjs().format('YYYY-MM-DD HH:mm:ss')			
+					};
+					
+					ws.send(JSON.stringify(message));
+					
+					print(message.sender, message.content, 'me', 'msg', message.regdate);
+					
+					$(event.target).val('').focus();
+					scrollList();
+					
+				}
 				
-				scrollList();
 				
 			}
 			
@@ -329,3 +361,17 @@
 	
 </body>
 </html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+

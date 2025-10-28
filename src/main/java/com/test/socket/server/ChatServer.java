@@ -19,9 +19,9 @@ import lombok.ToString;
 
 @ServerEndpoint("/chatserver.do")
 public class ChatServer {
-	
+
 	//현재 서버에 접속한 모든 클라이언트들
-	//private static List<session> sessionList;
+	//private static List<Session> sessionList;
 	private static List<User> sessionList;
 	
 	static {
@@ -37,33 +37,40 @@ public class ChatServer {
 		public Session session;
 	}
 	
+	
 	//이벤트
 	@OnOpen
-	public void handleOpen(Session session) {
+	public void handleOpen(Session session) {	
+		
 		System.out.println("클라이언트가 접속했습니다.");
 		
 		User user = new User(null, session);
 		
 		sessionList.add(user);
 		
-		System.out.println(sessionList);
+		//System.out.println(sessionList);
+		
 	}
+	
 	@OnClose
-	public void handleClose() {
+	public void handleClose() { 
+		
 		System.out.println("클라이언트와 접속이 끊겼습니다.");
+		
 	}
+	
 	@OnMessage
-	public void handleMessage(String message, Session session) {
+	public void handleMessage(String message, Session session) { 
 		
-		//System.out.println("클라이언트로부터 메세지가 도착했습니다.");
+		//System.out.println("클라이언트로부터 메시지가 도착했습니다.");
 		
-		//문자열(JSON 형식) > 파싱 + 매핑 > Message(DTO)
+		//문자열(JSON 형식) > 파싱 + 매핑 > Message(DTO) 
 		
-		System.out.println("메세지:" + message);
+		System.out.println("메시지: " + message);
 		
 		Gson gson = new Gson();
 		
-		Message mdto= gson.fromJson(message, Message.class);
+		Message mdto = gson.fromJson(message, Message.class);	
 		
 		//System.out.println(mdto);
 		
@@ -78,16 +85,18 @@ public class ChatServer {
 					break;
 				}
 			}
+			
 			user.name = mdto.getSender();
 			
 			//System.out.println(sessionList);
 			
+			
 			//당사자 빼고 나머지 유저들에게 알려주기
-			for (User s: sessionList) {
+			for (User s : sessionList) {
 				if (s.session != session) {
 					
 					//broadcast
-					//- 각각의 연결된 소켓으로 메세지 전달
+					//- 각각의 연결된 소켓으로 메시지 전달
 					try {
 						
 						s.session.getBasicRemote().sendText(message);
@@ -95,6 +104,7 @@ public class ChatServer {
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
+					
 				}
 			}
 			
@@ -113,17 +123,16 @@ public class ChatServer {
 			
 			for (User s : sessionList) {
 				try {
-					
 					s.session.getBasicRemote().sendText(message);
-					
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
 			}
-		} else if(mdto.getCode().equals("3")) {
 			
-			//(전역) 메세지 > 모든 사람들에게 전달
-			for (User s : sessionList)	{
+		} else if (mdto.getCode().equals("3")) {
+			
+			//(전역) 메시지 > 모든 사람들에게 전달
+			for (User s : sessionList) {
 				if (s.session != session) {
 					try {
 						s.session.getBasicRemote().sendText(message);
@@ -132,10 +141,39 @@ public class ChatServer {
 					}
 				}
 			}
+			
+		} else if (mdto.getCode().equals("4")) {
+	
+			//- /고양이 너 뭐해?
+			//{"code":"4","sender":"강아지","receiver":"고양이","content":"너 뭐해?","regdate":"2025-10-28 14:45:16"}
+			
+			for (User s : sessionList) {
+				
+				if (s.name.equals(mdto.getReceiver())) {
+					
+					try {
+						
+						s.session.getBasicRemote().sendText(message);
+						
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+					
+					break;
+					
+				}
+				
+			}
+			
 		}
 	}
+	
 	@OnError
-	public void handleError(Throwable e) {
+	public void handleError(Throwable e) { 
+		
 		System.out.println("오류 발생");
+		
 	}
+	
 }
+
