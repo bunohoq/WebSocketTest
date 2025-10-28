@@ -1,0 +1,86 @@
+새 프로젝트 
+
+- New > Spring Legacy Project > Spring MVC Project
+- Project name: "WebSocketTest"
+- root package: "com.test.socket"
+
+
+
+현재 프로젝트 버전 수정하기
+
+1. 자바 버전 > 11
+	- pom.xml
+	- 프로젝트 > 우측버튼 > Properties > Project facets
+	
+2. 스프링 버전 > 5.0.7
+	- pom.xml
+
+	
+WebSocket, 웹소켓
+- 소켓(Socket) > 네트워크상에서 호스트간의 데이터를 주고 받은 규약(인터페이스)
+	- 자바 > 소켓 인터페이스 구현 > 자바 소켓 클래스
+	- C# > 소켓 인터페이스 구현 > C# 소켓 클래스 
+
+- WebSocket > ws 프로토콜을 기반으로 웹 클라이언트(JavaScript)와 서버(Servlet, Spring, ASP.NET 등) 사이에 통신을 제공하는 기술
+	- 소켓에 비해 쉽고 간결하게 구현
+	
+
+개념 비교
+1. 여태까지 환경(http) > 브라우저 + 웹서버, ajax + 웹서버
+	- 비연결 지향
+	- 둘의 관계가 일방적 > 오롯이 클라이언트의 의지만으로 서로 연결이 가능
+	                     > 서버의 의지로는 클라이언트에 연결 불가능
+
+2. 소켓 환경(ws) > 웹소켓간의 통신(자바스크립트 소켓 + 자바(스프링) 소켓)
+	- 연결 지향
+	- 둘의 관계가 양방향 > 서버측이 클라이언트에게 요청 가능
+	                     > 클라이언트측이 서버에게 요청 가능
+
+
+
+소켓 통신 동작 방식
+
+1. 호스트A, 호스트B
+
+2. 호스트A > 소켓(전화기) 생성 + [IP주소(+포트번호) = 종단점(EndPoint)]
+3. 호스트B > 소켓(전화기) 생성 + [IP주소(+포트번호) = 종단점(EndPoint)]
+
+4. 호스트B > 받는 사람 > 서버 > 미리 수신 대기 준비 = 리스너 역할
+5. 호스트A > 거는 사람 > 클라이언트 > 호스트 B의 종단점 + 연결 시도
+6. 호스트B > 연결 수락 > 연결 수립
+	
+
+
+
+WebSocket 설정
+1. 의존성
+	- pom.xml
+
+
+
+
+1:1 통신 예
+- 서버 > 스프링
+- 클라이언트 > 자바스크립트
+
+
+파일
+- "com.test.socket.controller" > "SocketController.java" //그냥 컨트롤러
+- "com.test.socket.server" > "SocketServer.java" //서버
+ 
+- views > "test.jsp" //클라이언트
+
+
+
+
+
+
+
+
+
+	
+	
+	
+	
+	
+	
