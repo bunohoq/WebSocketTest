@@ -132,7 +132,7 @@
 			<h2>WebSocket <small></small></h2>
 		</div>
 		<div id="list"></div>
-		<input type="text" id="msg" placeholder="대화 내용을 입력하세요.">
+		<input type="text" id="msg" placeholder="대화 내용을 입력하세요." autofocus>
 	</div>
 	
 	<script src="https://code.jquery.com/jquery-3.7.1.js"></script>
@@ -225,6 +225,8 @@
 					print(message.sender, message.content, 'other', 'msg', message.regdate);
 				} else if (message.code == '4') {
 					print(message.sender, message.content, 'other', 'secret', message.regdate);
+				} else if (message.code == '5') {
+					printEmoticon(message.sender, message.content, 'other', 'msg', message.regdate);
 				}
 			
 				scrollList();
@@ -303,8 +305,10 @@
 				
 				//- 안녕하세요.
 				//- /고양이 안녕하세요.
+				//- #심쿵
 				
 				const regex = /^\/\S{1,}/;
+				const regex2 = /^#[가-힣]{1,}$/;
 				
 				//console.log(regex.test($(event.target).val()));
 				
@@ -326,6 +330,24 @@
 					$(event.target).val('').focus();
 					scrollList();
 					
+				} else if (regex2.test($(event.target).val())) {
+					
+					//이모티콘
+					const message = {
+						code: '5',
+						sender: username,
+						receiver: '',
+						content: $(event.target).val(), //#심쿵
+						regdate: dayjs().format('YYYY-MM-DD HH:mm:ss')			
+					};
+					
+					ws.send(JSON.stringify(message));
+					
+					printEmoticon(message.sender, message.content, 'me', 'msg', message.regdate);
+					
+					$(event.target).val('').focus();
+					//scrollList();
+				
 				} else {
 					
 					//전체 메시지
@@ -356,22 +378,25 @@
 		function scrollList() {
 			$('#list').scrollTop($('#list')[0].scrollHeight + 300);
 		}
+		
+		function printEmoticon(name, msg, side, state, time) {
+			let temp = `
+				<div class="item \${state} \${side}">
+					<div>
+						<div>\${name}</div>
+						<div style='background-color: #FFF;border: 0;'><img src='/socket/resources/emoticon/\${msg.substr(1)}.png'></div>
+					</div>
+					<div>\${time}</div>
+				</div>		
+				`;
+				
+			$('#list').append(temp);
+			
+			//scrollList();
+			setTimeout(scrollList, 100);
+		}
 	
 	</script>
 	
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-

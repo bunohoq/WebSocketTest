@@ -129,7 +129,8 @@ public class ChatServer {
 				}
 			}
 			
-		} else if (mdto.getCode().equals("3")) {
+		} else if (mdto.getCode().equals("3") 
+					|| mdto.getCode().equals("5")) {
 			
 			//(전역) 메시지 > 모든 사람들에게 전달
 			for (User s : sessionList) {
